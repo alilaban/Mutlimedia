@@ -35,6 +35,8 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pdfButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compressButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fftButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sepiaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hueModifierToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +60,6 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
-            this.compressButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -76,7 +77,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openToolStripMenuItem, this.saveToolStripMenuItem, this.exitToolStripMenuItem, this.pdfButtonToolStripMenuItem, this.compressButtonToolStripMenuItem });
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openToolStripMenuItem, this.saveToolStripMenuItem, this.exitToolStripMenuItem, this.pdfButtonToolStripMenuItem, this.compressButtonToolStripMenuItem, this.fftButtonToolStripMenuItem });
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
@@ -108,6 +109,20 @@
             this.pdfButtonToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
             this.pdfButtonToolStripMenuItem.Text = "pdfButton";
             this.pdfButtonToolStripMenuItem.Click += new System.EventHandler(this.pdfButtonToolStripMenuItem_Click);
+            // 
+            // compressButtonToolStripMenuItem
+            // 
+            this.compressButtonToolStripMenuItem.Name = "compressButtonToolStripMenuItem";
+            this.compressButtonToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.compressButtonToolStripMenuItem.Text = "compressButton";
+            this.compressButtonToolStripMenuItem.Click += new System.EventHandler(this.compressButtonToolStripMenuItem_Click_1);
+            // 
+            // fftButtonToolStripMenuItem
+            // 
+            this.fftButtonToolStripMenuItem.Name = "fftButtonToolStripMenuItem";
+            this.fftButtonToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.fftButtonToolStripMenuItem.Text = "fftButton";
+            this.fftButtonToolStripMenuItem.Click += new System.EventHandler(this.fftButtonToolStripMenuItem_Click);
             // 
             // imageProcessingToolStripMenuItem
             // 
@@ -276,13 +291,6 @@
             // 
             this.openFileDialog2.FileName = "openFileDialog2";
             // 
-            // compressButtonToolStripMenuItem
-            // 
-            this.compressButtonToolStripMenuItem.Name = "compressButtonToolStripMenuItem";
-            this.compressButtonToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.compressButtonToolStripMenuItem.Text = "compressButton";
-            this.compressButtonToolStripMenuItem.Click += new System.EventHandler(this.compressButtonToolStripMenuItem_Click_1);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -303,6 +311,8 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolStripMenuItem fftButtonToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem compressButtonToolStripMenuItem;
 

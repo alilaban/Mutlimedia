@@ -16,11 +16,15 @@ using Image = System.Drawing.Image;
 using Rectangle = System.Drawing.Rectangle;
 using System.IO;
 using System.IO.Compression;
+using AForge.Imaging;
+
 namespace alaaali
 
 {
     public partial class Form1 : Form
     {
+        
+        
         private List<Rectangle> selectedAreas = new List<Rectangle>();
         private bool isSelecting = false;
         private Color selectedColor;
@@ -59,11 +63,85 @@ namespace alaaali
             Button pdfButton = new Button { Text = "Generate PDF", Location = new Point(280, 400) };
             pdfButton.Click += pdfButtonToolStripMenuItem_Click;
             this.Controls.Add(pdfButton);
+            
+            
+            // Add a button for applying FFT
+            Button fftButton = new Button { Text = "Apply FFT", Location = new Point(370, 400) };
+            fftButton.Click += fftButtonToolStripMenuItem_Click;
+            this.Controls.Add(fftButton);
+        }
+        private void fourier()
+        {
+            if (pictureBox1.Image != null)
+            {
+                Bitmap bitmap = new Bitmap(pictureBox1.Image);
+                Bitmap resizedImage = ResizeToPowerOf2(bitmap);
+                // Convert the image to grayscale
+                Grayscale filter = new Grayscale(0.2125, 0.7154, 0.0721);
+                Bitmap grayImage = filter.Apply(resizedImage);
+                // Apply FFT to the grayscale image
+                ComplexImage complexImage = ComplexImage.FromBitmap(grayImage);
+                complexImage.ForwardFourierTransform();
+
+      
+                // Compute the magnitude spectrum for visualization
+                Bitmap magnitudeImage = complexImage.ToBitmap();
+                pictureBox2.Image = magnitudeImage;
+                pictureBox2.Invalidate();
+            }
+
+
+        }
+        private Bitmap ResizeToPowerOf2(Bitmap bitmap)
+        {
+            if (pictureBox1.Image != null)
+            {
+                bitmap = new Bitmap(pictureBox1.Image, pictureBox1.Width, pictureBox1.Height);
+                int width = bitmap.Width;
+                int height = bitmap.Height;
+
+                int newWidth = NearestPowerOf2(width);
+                int newHeight = NearestPowerOf2(height);
+
+                Bitmap resizedImage = new Bitmap(newWidth, newHeight);
+                using (Graphics g = Graphics.FromImage(resizedImage))
+                {
+                    g.DrawImage(bitmap, 0, 0, newWidth, newHeight);
+                }
+
+                return resizedImage;
+            }
+
+            return null;
+        }
+
+
+        private int NearestPowerOf2(int value)
+        {
+            int power = 1;
+            while (power < value)
+            {
+                power *= 2;
+            }
+            return power;
+        }
+        private void fftButtonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        
+            if (pictureBox1.Image == null)
+            {
+                MessageBox.Show("Please load an image first.");
+                return;
+            }
+
+            
+            // fourier to the loaded image
+            fourier();
         }
         private void pdfButtonToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Compressed PDF file (*.pdf.gz)|*.pdf.gz";
+            // saveFileDialog.Filter = "Compressed PDF file (*.pdf.gz)|*.pdf.gz";
             saveFileDialog.Title = "Save PDF Report";
             saveFileDialog.InitialDirectory = @"C:\"; // Update initial directory as needed
             saveFileDialog.RestoreDirectory = true;
@@ -733,7 +811,10 @@ namespace alaaali
              }
          }
 
-
-      
+         //
+         // private void shareToolStripMenuItem_Click(object sender, EventArgs e)
+         // {
+         //     SocialMediaService();
+         // }
     }
 }
