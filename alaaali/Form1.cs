@@ -17,7 +17,18 @@ using Rectangle = System.Drawing.Rectangle;
 using System.IO;
 using System.IO.Compression;
 using AForge.Imaging;
+using System.Data;
+using Bitmap = System.Drawing.Bitmap;
 
+
+
+using System.Diagnostics;
+using System.Drawing.Drawing2D;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+
+using Newtonsoft.Json.Linq;
 namespace alaaali
 
 {
@@ -33,14 +44,52 @@ namespace alaaali
         private AudioRecorder audioRecorder;
         private AudioPlayer audioPlayer;
         private string audioFilePath;
+        
+        private Bitmap bm;
+        private Graphics g;
+        private bool _isPainting;
+        private Point px, py;
+        private Pen p = new Pen(Color.Black,1);
+        private Pen eraser = new Pen(Color.Transparent, 10);
+        private int index;
+        private int x, y, sX, sY, cX, cY;
+        private ColorDialog _colorDialog;
+        private Color new_color;
+        
+        
+
+       
+         private Color _paintColor = Color.Black;
+         private  int _paintBrushSize = 1;
+         private bool _isSelect = true;
+         private string _brushType = "Triangle";
+         private string[] _files;
+         private Bitmap originalimage;
+         private Bitmap copyimage;
+         private Point textLocation;
+        
         public Form1()
         {
             InitializeComponent();
 
+            // this.Width = 900;
+            // this.Height = 700;
+            // bm = new Bitmap(pictureBox1.Width,pictureBox1.Height);
+            // g = Graphics.FromImage(bm);
+            // g.Clear (Color.White);
+            // pictureBox1.Image = bm;
+            
             pictureBox1.MouseDown += PictureBox1_MouseDown;
             pictureBox1.MouseMove += PictureBox1_MouseMove;
             pictureBox1.MouseUp += PictureBox1_MouseUp;
             pictureBox1.Paint += PictureBox1_Paint;
+            
+            pictureBox1.MouseDown += pictureBox2_MouseDown;
+            pictureBox1.MouseMove += pictureBox2_MouseMove;
+            pictureBox1.MouseUp += pictureBox2_MouseUp;
+          
+            // Initialize pictureBox2.Image with a blank Bitmap
+            pictureBox2.Image = new Bitmap(pictureBox2.Width, pictureBox2.Height);
 
             audioRecorder = new AudioRecorder();
             audioPlayer = new AudioPlayer();
@@ -69,7 +118,365 @@ namespace alaaali
             Button fftButton = new Button { Text = "Apply FFT", Location = new Point(370, 400) };
             fftButton.Click += fftButtonToolStripMenuItem_Click;
             this.Controls.Add(fftButton);
+            
         }
+        private void colorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ColorDialog _colorDialog = new ColorDialog();
+            if (_colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                _paintColor = _colorDialog.Color;
+                selectedColor = _colorDialog.Color;
+                p.Color = _paintColor;
+                colorSelected = true;
+            }
+        }
+   
+        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            p.Width = _paintBrushSize;
+            eraser.Width = _paintBrushSize;
+            _isPainting = true;
+            if (index == 1)
+            {
+                PaintOnPictureBox(e.Location);
+            }
+            else if (index == 2 || index == 3)
+            {
+                py = e.Location;
+            }
+            cX = e.X;
+            cY = e.Y;
+
+            pictureBox2.Invalidate();
+        }
+        private void pictureBox2_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isPainting)
+            {
+                if (index == 1)
+                {
+                    PaintOnPictureBox(e.Location);
+                }
+                else if (index == 2)
+                {
+                    px = e.Location;
+                    using (Graphics g = Graphics.FromImage(pictureBox2.Image))
+                    {
+                        g.DrawLine(p, px, py);
+                    }
+                    py = px;
+                }
+                else if (index == 3)
+                {
+                    px = e.Location;
+                    using (Graphics g = Graphics.FromImage(pictureBox2.Image))
+                    {
+                        g.CompositingMode = CompositingMode.SourceCopy;
+                        g.DrawLine(eraser, px, py);
+                    }
+                    py = px;
+                }
+                x = e.X;
+                y = e.Y;
+                sX = e.X - cX;
+                sY = e.Y - cY;
+            }
+            pictureBox2.Invalidate();
+        }
+
+        private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            _isPainting = false;
+            sX = x - cX;
+            sY = y - cY;
+            using (Graphics g = Graphics.FromImage(pictureBox2.Image))
+            {
+                if (index == 4)
+                {
+                    g.DrawEllipse(p, cX, cY, sX, sY);
+                }
+                else if (index == 5)
+                {
+                    g.DrawRectangle(p, cX, cY, sX, sY);
+                }
+                else if (index == 6)
+                {
+                    g.DrawLine(p, cX, cY, x, y);
+                }
+                else if (index == 8)
+                {
+                    Point[] trianglePoints = { new Point(cX, cY), new Point(cX + sX, cY), new Point(cX, cY + sY) };
+                    g.DrawPolygon(p, trianglePoints);
+                }
+                else if (index == 9)
+                {
+                    Point[] curvePoints = { new Point(cX, cY), new Point(cX + sX / 2, cY - sY), new Point(cX + sX, cY) };
+                    g.DrawCurve(p, curvePoints);
+                }
+            }
+            pictureBox2.Invalidate();
+        }
+        // Ensure pictureBox2.Image is properly initialized before using it
+        private void InitializeGraphics()
+        {
+            if (pictureBox2.Image == null)
+            {
+                pictureBox2.Image = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+            }
+        }
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeGraphics();
+            using (Graphics g = Graphics.FromImage(pictureBox2.Image))
+            {
+                g.Clear(Color.White);
+            }
+            pictureBox2.Invalidate();
+            index = 0;
+        }
+        
+     
+         static Point set_point(PictureBox pb, Point pt)
+         {
+             float pX = 1f * pb.Image.Width / pb.Width;
+             float pY = 1f * pb.Image.Height / pb.Height;
+             return new Point((int)(pt.X * pX), (int)(pt.Y* pY));
+         }
+         
+         private void pictureBox2_Paint(object sender, PaintEventArgs e)
+         {
+            if (_isPainting)
+            {
+
+
+                Graphics g = e.Graphics;
+                if (index == 4)
+                {
+                    g.DrawEllipse(p, cX, cY, sX, sY);
+                }
+
+                if (index == 5)
+                {
+                    g.DrawRectangle(p, cX, cY, sX, sY);
+                }
+
+                if (index == 6)
+                {
+                    g.DrawLine(p, cX, cY, x, y);
+                }
+                if (index == 8)
+                {
+                    // Define the three points of the triangle
+                    Point point1 = new Point(cX, cY); // This will be the first vertex
+                    Point point2 = new Point(cX + sX, cY); // Second vertex
+                    Point point3 = new Point(cX, cY + sY); // Third vertex
+                    
+                    // Create an array of points
+                    Point[] trianglePoints = { point1, point2, point3 };
+                    
+                    // Draw the triangle
+                    g.DrawPolygon(p, trianglePoints);
+
+                }
+
+                if (index == 9)
+                {
+                    // Define points that the curve will pass through
+                    Point[] curvePoints = {
+                        new Point(cX, cY),
+                        new Point(cX + sX / 2, cY - sY), // Control point for the curve
+                        new Point(cX + sX, cY)
+                    };
+
+                    // Draw the curve
+                    g.DrawCurve(p, curvePoints);
+                }
+
+            }
+        }
+
+        // private void PictureBox1_Paint(object sender, PaintEventArgs e)
+        // {
+        //     Graphics g = e.Graphics;
+        //     if (_isPainting)
+        //     {
+        //         if (index == 3)
+        //         {
+        //             g.DrawEllipse(p, cX, cY, sX, sY);
+        //         }
+        //
+        //         if (index == 4)
+        //         {
+        //             g.DrawRectangle(p, cX, cY, sX, sY);
+        //         }
+        //
+        //         if (index == 5)
+        //         {
+        //             g.DrawLine(p, cX, cY, x, y);
+        //         }
+        //     }
+        // }
+
+        private void paintToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _isSelect = false;
+            index = 1;
+        }
+        private void pencilToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeGraphics();
+            index = 2;
+            _isSelect = false;
+        }
+        private void eraserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeGraphics();
+            index = 3;
+            _isSelect = false;
+            if (pictureBox2.Image != null)
+            {
+                originalimage = (Bitmap)pictureBox2.Image;
+                copyimage = (Bitmap)pictureBox1.Image;
+            }
+        }
+        private void ellipseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeGraphics();
+            index = 4;
+            _isSelect = false;
+        }
+        private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeGraphics();
+            index = 5;
+            _isSelect = false;
+        }
+        private void lineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeGraphics();
+            index = 6;
+            _isSelect = false;
+        }
+        
+        private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeGraphics();
+            index = 8;
+            _isSelect = false;
+        }
+        private void pictureBox2_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (index == 7)
+            {
+                bm =(Bitmap) pictureBox2.Image;
+                Point point = set_point(pictureBox2, e.Location);
+                fill(bm,point.X,point.Y,_paintColor);
+            }
+        }
+        
+        private void fillToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            index = 7;
+        }
+        public void fill(Bitmap bm, int x, int y, Color color)
+         {
+             Color old_color = bm.GetPixel(x, y);
+             Stack<Point> pixel = new Stack<Point>();
+             pixel.Push(new Point(x,y));
+             bm.SetPixel(x,y,color);
+             if (old_color == color) 
+             {
+               
+                 return;
+             }
+
+             while (pixel.Count > 0)
+             {
+                 Console.WriteLine(pixel.Count);
+                 Point pt = (Point)pixel.Pop();
+                 if (pt.X > 0 && pt.Y > 0 && pt.X < bm.Width - 1 && pt.Y < bm.Height - 1)
+                 {
+                     validate(bm,pixel,pt.X-1,pt.Y,old_color,color);
+                     validate(bm,pixel,pt.X,pt.Y,old_color,color);
+                     validate(bm,pixel,pt.X+1,pt.Y,old_color,color);
+                     validate(bm,pixel,pt.X,pt.Y+1,old_color,color);
+                 }
+             }
+         }
+        
+        private void validate(Bitmap bm, Stack<Point> sp, int x, int y, Color oldColor, Color newColor)
+         {
+             Color cx = bm.GetPixel(x, y);
+             if (cx == oldColor)
+             {
+                 sp.Push(new Point(x,y));
+                 bm.SetPixel(x,y,newColor);
+             }
+         }
+
+         private void PaintOnPictureBox(Point location)
+         {
+            InitializeGraphics();
+
+            if (_isPainting)
+            {
+                using (Graphics g = Graphics.FromImage(pictureBox2.Image))
+                {
+                    switch (_brushType)
+                    {
+                        case "Round":
+                            using (Brush brush = new SolidBrush(_paintColor))
+                            {
+                                g.FillEllipse(brush, location.X - _paintBrushSize / 2, location.Y - _paintBrushSize / 2, _paintBrushSize, _paintBrushSize);
+                            }
+                            break;
+                        case "Square":
+                            using (Brush brush = new SolidBrush(_paintColor))
+                            {
+                                g.FillRectangle(brush, location.X - _paintBrushSize / 2, location.Y - _paintBrushSize / 2, _paintBrushSize, _paintBrushSize);
+                            }
+                            break;
+                        case "Triangle":
+                            using (Brush brush = new SolidBrush(_paintColor))
+                            {
+                                Point[] points = {
+                                    new Point(location.X, location.Y - _paintBrushSize / 2),
+                                    new Point(location.X - _paintBrushSize / 2, location.Y + _paintBrushSize / 2),
+                                    new Point(location.X + _paintBrushSize / 2, location.Y + _paintBrushSize / 2)
+                                };
+                                g.FillPolygon(brush, points);
+                            }
+                            break;
+                        case "Star":
+                            using (Brush brush = new SolidBrush(_paintColor))
+                            {
+                                PointF[] starPoints = createStarPoints(5, new PointF(location.X, location.Y), _paintBrushSize * 2, _paintBrushSize);
+                                g.FillPolygon(brush, starPoints);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            pictureBox2.Invalidate();
+        }
+
+         private PointF[] createStarPoints(int numPoints, PointF center, float outerRadius, float innerRadius)
+         {
+             List<PointF> points = new List<PointF>();
+             double angle = Math.PI / numPoints;
+             for (int i = 0; i < 2 * numPoints; i++)
+             {
+                 double r = (i % 2 == 0) ? outerRadius : innerRadius;
+                 PointF pt = new PointF(
+                     center.X + (float)(r * Math.Sin(i * angle)),
+                     center.Y - (float)(r * Math.Cos(i * angle)));
+                 points.Add(pt);
+             }
+             return points.ToArray();
+         }
+
         private void fourier()
         {
             if (pictureBox1.Image != null)
@@ -133,7 +540,6 @@ namespace alaaali
                 MessageBox.Show("Please load an image first.");
                 return;
             }
-
             
             // fourier to the loaded image
             fourier();
@@ -343,7 +749,7 @@ namespace alaaali
         {
             isSelecting = false;
             if (selectedAreas.Count == 0) return;
-
+        
             pictureBox1.Invalidate();
         }
 
@@ -563,8 +969,10 @@ namespace alaaali
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            pictureBox1.Image = null;
-            pictureBox2.Image = null;
+            // pictureBox1.Image = null;
+            // pictureBox2.Image = null;
+            pictureBox1.AllowDrop = true;
+            _colorDialog = new ColorDialog();
         }
 
         private void openSecondImageToolStripMenuItem_Click_1(object sender, EventArgs e)
@@ -810,11 +1218,170 @@ namespace alaaali
                  AddCommentToImage(comment);
              }
          }
-
-         //
-         // private void shareToolStripMenuItem_Click(object sender, EventArgs e)
-         // {
-         //     SocialMediaService();
-         // }
+         private async void shareToolStripMenuItem_Click(object sender, EventArgs e)
+         {
+        
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "All Files (*.*)|*.*";
+                openFileDialog.Title = "Select a File to Share";
+        
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = openFileDialog.FileName;
+        
+                    ContextMenuStrip shareMenu = new ContextMenuStrip();
+        
+                    ToolStripMenuItem shareViaWhatsApp = new ToolStripMenuItem("Share via WhatsApp");
+                    shareViaWhatsApp.Click += async (s, ev) => await ShareViaWhatsApp(filePath);
+                    shareMenu.Items.Add(shareViaWhatsApp);
+        
+                    ToolStripMenuItem shareViaTelegram = new ToolStripMenuItem("Share via Telegram");
+                    shareViaTelegram.Click += async (s, ev) => await ShareViaTelegram(filePath);
+                    shareMenu.Items.Add(shareViaTelegram);
+        
+                    shareMenu.Show(Cursor.Position);
+                }
+            }
+        }
+        
+        private async Task ShareViaWhatsApp(string filePath)
+        {
+            try
+            {
+                string fileUrl = await UploadFile(filePath);
+                string whatsappUrl = $"https://api.whatsapp.com/send?text={Uri.EscapeDataString(fileUrl)}";
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {whatsappUrl}") { CreateNoWindow = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error sharing via WhatsApp: {ex.Message}");
+            }
+        }
+        
+        private async Task ShareViaTelegram(string filePath)
+        {
+            try
+            {
+                string fileUrl = await UploadFile(filePath);
+                string telegramUrl = $"https://t.me/share/url?url={Uri.EscapeDataString(fileUrl)}";
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {telegramUrl}") { CreateNoWindow = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error sharing via Telegram: {ex.Message}");
+            }
+        }
+        
+        private async Task<string> UploadFile(string filePath)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                using (MultipartFormDataContent content = new MultipartFormDataContent())
+                {
+                    byte[] fileBytes = File.ReadAllBytes(filePath);
+                    content.Add(new ByteArrayContent(fileBytes, 0, fileBytes.Length), "file", Path.GetFileName(filePath));
+        
+                    HttpResponseMessage response = await client.PostAsync("https://file.io", content);
+                    response.EnsureSuccessStatusCode();
+        
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody);
+                    return jsonResponse.link;
+                }
+            }
+        }
+        
+       // private async void shareToolStripMenuItem_Click(object sender, EventArgs e)
+       //  {
+       //      using (OpenFileDialog openFileDialog = new OpenFileDialog())
+       //      {
+       //          openFileDialog.Filter = "All Files (*.*)|*.*";
+       //          openFileDialog.Title = "Select a File to Share";
+       //
+       //          if (openFileDialog.ShowDialog() == DialogResult.OK)
+       //          {
+       //              string filePath = openFileDialog.FileName;
+       //
+       //              ContextMenuStrip shareMenu = new ContextMenuStrip();
+       //
+       //              ToolStripMenuItem shareViaWhatsApp = new ToolStripMenuItem("Share via WhatsApp");
+       //              shareViaWhatsApp.Click += async (s, ev) => await ShareViaWhatsApp(filePath);
+       //              shareMenu.Items.Add(shareViaWhatsApp);
+       //
+       //              ToolStripMenuItem shareViaTelegram = new ToolStripMenuItem("Share via Telegram");
+       //              shareViaTelegram.Click += async (s, ev) => await ShareViaTelegram(filePath);
+       //              shareMenu.Items.Add(shareViaTelegram);
+       //
+       //              shareMenu.Show(Cursor.Position);
+       //          }
+       //      }
+       //  }
+       //
+       //  private async Task ShareViaWhatsApp(string filePath)
+       //  {
+       //      try
+       //      {
+       //          string fileUrl = await UploadFile(filePath);
+       //          string whatsappUrl = $"https://api.whatsapp.com/send?text={Uri.EscapeDataString(fileUrl)}";
+       //          Process.Start(new ProcessStartInfo("cmd", $"/c start {whatsappUrl}") { CreateNoWindow = true });
+       //      }
+       //      catch (Exception ex)
+       //      {
+       //          MessageBox.Show($"Error sharing via WhatsApp: {ex.Message}");
+       //      }
+       //  }
+       //
+       //  private async Task ShareViaTelegram(string filePath)
+       //  {
+       //      try
+       //      {
+       //          string fileUrl = await UploadFile(filePath);
+       //          string telegramUrl = $"https://t.me/share/url?url={Uri.EscapeDataString(fileUrl)}";
+       //          Process.Start(new ProcessStartInfo("cmd", $"/c start {telegramUrl}") { CreateNoWindow = true });
+       //      }
+       //      catch (Exception ex)
+       //      {
+       //          MessageBox.Show($"Error sharing via Telegram: {ex.Message}");
+       //      }
+       //  }
+       //
+       //  private async Task<string> UploadFile(string filePath)
+       //  {
+       //      using (HttpClient client = new HttpClient())
+       //      {
+       //          using (MultipartFormDataContent content = new MultipartFormDataContent())
+       //          {
+       //              try
+       //              {
+       //                  byte[] fileBytes = File.ReadAllBytes(filePath);
+       //                  content.Add(new ByteArrayContent(fileBytes, 0, fileBytes.Length), "files[]", Path.GetFileName(filePath));
+       //
+       //                  HttpResponseMessage response = await client.PostAsync("https://uguu.se/upload.php", content);
+       //
+       //                  // Log response details for debugging
+       //                  string responseBody = await response.Content.ReadAsStringAsync();
+       //                  if (!response.IsSuccessStatusCode)
+       //                  {
+       //                      MessageBox.Show($"Error: {response.StatusCode}\n{responseBody}");
+       //                      return null;
+       //                  }
+       //
+       //                  dynamic jsonResponse = JObject.Parse(responseBody);
+       //                  return jsonResponse.files[0].url;
+       //              }
+       //              catch (HttpRequestException httpEx)
+       //              {
+       //                  MessageBox.Show($"HTTP Request Error: {httpEx.Message}");
+       //                  return null;
+       //              }
+       //              catch (Exception ex)
+       //              {
+       //                  MessageBox.Show($"General Error: {ex.Message}");
+       //                  return null;
+       //              }
+       //          }
+       //      }
+       //  }
     }
 }
