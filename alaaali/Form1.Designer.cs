@@ -36,7 +36,6 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pdfButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.compressButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fftButtonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ellipseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rectangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +46,8 @@
             this.paintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.triangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.shareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fFTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sepiaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hueModifierToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,7 +71,8 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
-            this.shareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -88,7 +90,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openToolStripMenuItem, this.saveToolStripMenuItem, this.exitToolStripMenuItem, this.pdfButtonToolStripMenuItem, this.compressButtonToolStripMenuItem, this.fftButtonToolStripMenuItem, this.ellipseToolStripMenuItem, this.rectangleToolStripMenuItem, this.lineToolStripMenuItem, this.pencilToolStripMenuItem, this.eraserToolStripMenuItem, this.fillToolStripMenuItem, this.clearToolStripMenuItem, this.paintToolStripMenuItem, this.triangleToolStripMenuItem, this.colorToolStripMenuItem1, this.shareToolStripMenuItem });
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openToolStripMenuItem, this.saveToolStripMenuItem, this.exitToolStripMenuItem, this.pdfButtonToolStripMenuItem, this.compressButtonToolStripMenuItem, this.ellipseToolStripMenuItem, this.rectangleToolStripMenuItem, this.lineToolStripMenuItem, this.pencilToolStripMenuItem, this.eraserToolStripMenuItem, this.fillToolStripMenuItem, this.clearToolStripMenuItem, this.paintToolStripMenuItem, this.triangleToolStripMenuItem, this.colorToolStripMenuItem1, this.shareToolStripMenuItem, this.fFTToolStripMenuItem, this.lBFToolStripMenuItem, this.hBFToolStripMenuItem });
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
@@ -127,13 +129,6 @@
             this.compressButtonToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
             this.compressButtonToolStripMenuItem.Text = "compressButton";
             this.compressButtonToolStripMenuItem.Click += new System.EventHandler(this.compressButtonToolStripMenuItem_Click_1);
-            // 
-            // fftButtonToolStripMenuItem
-            // 
-            this.fftButtonToolStripMenuItem.Name = "fftButtonToolStripMenuItem";
-            this.fftButtonToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.fftButtonToolStripMenuItem.Text = "fftButton";
-            this.fftButtonToolStripMenuItem.Click += new System.EventHandler(this.fftButtonToolStripMenuItem_Click);
             // 
             // ellipseToolStripMenuItem
             // 
@@ -204,6 +199,20 @@
             this.colorToolStripMenuItem1.Size = new System.Drawing.Size(185, 24);
             this.colorToolStripMenuItem1.Text = "color";
             this.colorToolStripMenuItem1.Click += new System.EventHandler(this.colorToolStripMenuItem1_Click);
+            // 
+            // shareToolStripMenuItem
+            // 
+            this.shareToolStripMenuItem.Name = "shareToolStripMenuItem";
+            this.shareToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.shareToolStripMenuItem.Text = "share";
+            this.shareToolStripMenuItem.Click += new System.EventHandler(this.shareToolStripMenuItem_Click);
+            // 
+            // fFTToolStripMenuItem
+            // 
+            this.fFTToolStripMenuItem.Name = "fFTToolStripMenuItem";
+            this.fFTToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.fFTToolStripMenuItem.Text = "FFT";
+            this.fFTToolStripMenuItem.Click += new System.EventHandler(this.fFTToolStripMenuItem_Click);
             // 
             // imageProcessingToolStripMenuItem
             // 
@@ -363,6 +372,7 @@
             this.pictureBox2.Size = new System.Drawing.Size(678, 689);
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
+            this.pictureBox2.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox2_Paint_1);
             this.pictureBox2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseClick);
             this.pictureBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseDown);
             this.pictureBox2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox2_MouseMove);
@@ -376,12 +386,19 @@
             // 
             this.openFileDialog2.FileName = "openFileDialog2";
             // 
-            // shareToolStripMenuItem
+            // lBFToolStripMenuItem
             // 
-            this.shareToolStripMenuItem.Name = "shareToolStripMenuItem";
-            this.shareToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.shareToolStripMenuItem.Text = "share";
-            this.shareToolStripMenuItem.Click += new System.EventHandler(this.shareToolStripMenuItem_Click);
+            this.lBFToolStripMenuItem.Name = "lBFToolStripMenuItem";
+            this.lBFToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.lBFToolStripMenuItem.Text = "lBF";
+            this.lBFToolStripMenuItem.Click += new System.EventHandler(this.lBFToolStripMenuItem_Click_1);
+            // 
+            // hBFToolStripMenuItem
+            // 
+            this.hBFToolStripMenuItem.Name = "hBFToolStripMenuItem";
+            this.hBFToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.hBFToolStripMenuItem.Text = "hBF";
+            this.hBFToolStripMenuItem.Click += new System.EventHandler(this.hBFToolStripMenuItem_Click_1);
             // 
             // Form1
             // 
@@ -404,6 +421,11 @@
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.ToolStripMenuItem lBFToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hBFToolStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem fFTToolStripMenuItem;
+
         private System.Windows.Forms.ToolStripMenuItem shareToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem colorToolStripMenuItem1;
@@ -424,8 +446,6 @@
         private System.Windows.Forms.ToolStripMenuItem lineToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem ellipseToolStripMenuItem;
-
-        private System.Windows.Forms.ToolStripMenuItem fftButtonToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem compressButtonToolStripMenuItem;
 

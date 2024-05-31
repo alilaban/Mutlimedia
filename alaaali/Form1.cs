@@ -84,9 +84,10 @@ namespace alaaali
             pictureBox1.MouseUp += PictureBox1_MouseUp;
             pictureBox1.Paint += PictureBox1_Paint;
             
-            pictureBox1.MouseDown += pictureBox2_MouseDown;
-            pictureBox1.MouseMove += pictureBox2_MouseMove;
-            pictureBox1.MouseUp += pictureBox2_MouseUp;
+            pictureBox2.MouseDown += pictureBox2_MouseDown;
+            pictureBox2.MouseMove += pictureBox2_MouseMove;
+            pictureBox2.MouseUp += pictureBox2_MouseUp;
+            pictureBox2.Paint+=pictureBox2_Paint_1;
           
             // Initialize pictureBox2.Image with a blank Bitmap
             pictureBox2.Image = new Bitmap(pictureBox2.Width, pictureBox2.Height);
@@ -113,12 +114,6 @@ namespace alaaali
             pdfButton.Click += pdfButtonToolStripMenuItem_Click;
             this.Controls.Add(pdfButton);
             
-            
-            // Add a button for applying FFT
-            Button fftButton = new Button { Text = "Apply FFT", Location = new Point(370, 400) };
-            fftButton.Click += fftButtonToolStripMenuItem_Click;
-            this.Controls.Add(fftButton);
-            
         }
         private void colorToolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -141,7 +136,11 @@ namespace alaaali
             {
                 PaintOnPictureBox(e.Location);
             }
-            else if (index == 2 || index == 3)
+            else if (index == 2)
+            {
+                py = e.Location;
+            }
+            else if (index == 3)
             {
                 py = e.Location;
             }
@@ -160,23 +159,18 @@ namespace alaaali
                 }
                 else if (index == 2)
                 {
-                    px = e.Location;
-                    using (Graphics g = Graphics.FromImage(pictureBox2.Image))
-                    {
-                        g.DrawLine(p, px, py);
-                    }
+                    px = e.Location; 
+                    g.DrawLine(p, px, py);
                     py = px;
                 }
                 else if (index == 3)
                 {
                     px = e.Location;
-                    using (Graphics g = Graphics.FromImage(pictureBox2.Image))
-                    {
-                        g.CompositingMode = CompositingMode.SourceCopy;
-                        g.DrawLine(eraser, px, py);
-                    }
+                    g.CompositingMode = CompositingMode.SourceCopy;
+                    g.DrawLine(eraser, px, py);
                     py = px;
                 }
+                
                 x = e.X;
                 y = e.Y;
                 sX = e.X - cX;
@@ -196,28 +190,36 @@ namespace alaaali
                 {
                     g.DrawEllipse(p, cX, cY, sX, sY);
                 }
-                else if (index == 5)
+                 if (index == 5)
                 {
                     g.DrawRectangle(p, cX, cY, sX, sY);
                 }
-                else if (index == 6)
+                 if (index == 6)
                 {
                     g.DrawLine(p, cX, cY, x, y);
                 }
-                else if (index == 8)
+                 if (index == 8)
                 {
                     Point[] trianglePoints = { new Point(cX, cY), new Point(cX + sX, cY), new Point(cX, cY + sY) };
                     g.DrawPolygon(p, trianglePoints);
                 }
-                else if (index == 9)
+                 if (index == 9)
                 {
                     Point[] curvePoints = { new Point(cX, cY), new Point(cX + sX / 2, cY - sY), new Point(cX + sX, cY) };
                     g.DrawCurve(p, curvePoints);
                 }
+                // if (index == 10)
+                // {
+                //
+                //     textLocation = new Point(e.X, e.Y);
+                //     textBox1.Visible = true;
+                //     textBox1.Focus();
+                // }
             }
             pictureBox2.Invalidate();
         }
-        // Ensure pictureBox2.Image is properly initialized before using it
+        
+        
         private void InitializeGraphics()
         {
             if (pictureBox2.Image == null)
@@ -244,12 +246,11 @@ namespace alaaali
              return new Point((int)(pt.X * pX), (int)(pt.Y* pY));
          }
          
-         private void pictureBox2_Paint(object sender, PaintEventArgs e)
+         
+         private void pictureBox2_Paint_1(object sender, PaintEventArgs e)
          {
             if (_isPainting)
             {
-
-
                 Graphics g = e.Graphics;
                 if (index == 4)
                 {
@@ -325,13 +326,15 @@ namespace alaaali
         }
         private void pencilToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitializeGraphics();
+           //InitializeGraphics();
+            g = Graphics.FromImage(pictureBox2.Image);
             index = 2;
             _isSelect = false;
         }
         private void eraserToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitializeGraphics();
+            // InitializeGraphics();
+            g = Graphics.FromImage(pictureBox2.Image);
             index = 3;
             _isSelect = false;
             if (pictureBox2.Image != null)
@@ -348,20 +351,24 @@ namespace alaaali
         }
         private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitializeGraphics();
+            // InitializeGraphics();
+            g = Graphics.FromImage(pictureBox2.Image);
             index = 5;
             _isSelect = false;
         }
         private void lineToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitializeGraphics();
+            // InitializeGraphics();
+            g = Graphics.FromImage(pictureBox2.Image);
             index = 6;
             _isSelect = false;
+            Console.WriteLine(bm);
         }
         
         private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitializeGraphics();
+            // InitializeGraphics();
+            g = Graphics.FromImage(pictureBox2.Image);
             index = 8;
             _isSelect = false;
         }
@@ -476,74 +483,215 @@ namespace alaaali
              }
              return points.ToArray();
          }
+       
+        // private Bitmap ResizeToPowerOf2(Bitmap bitmap)
+        // {
+        //     if (pictureBox1.Image != null)
+        //     {
+        //         bitmap = new Bitmap(pictureBox1.Image, pictureBox1.Width, pictureBox1.Height);
+        //         int width = bitmap.Width;
+        //         int height = bitmap.Height;
+        //
+        //         int newWidth = NearestPowerOf2(width);
+        //         int newHeight = NearestPowerOf2(height);
+        //
+        //         Bitmap resizedImage = new Bitmap(newWidth, newHeight);
+        //         using (Graphics g = Graphics.FromImage(resizedImage))
+        //         {
+        //             g.DrawImage(bitmap, 0, 0, newWidth, newHeight);
+        //         }
+        //
+        //         return resizedImage;
+        //     }
+        //
+        //     return null;
+        // }
+        //
 
-        private void fourier()
-        {
-            if (pictureBox1.Image != null)
-            {
-                Bitmap bitmap = new Bitmap(pictureBox1.Image);
-                Bitmap resizedImage = ResizeToPowerOf2(bitmap);
-                // Convert the image to grayscale
-                Grayscale filter = new Grayscale(0.2125, 0.7154, 0.0721);
-                Bitmap grayImage = filter.Apply(resizedImage);
-                // Apply FFT to the grayscale image
-                ComplexImage complexImage = ComplexImage.FromBitmap(grayImage);
-                complexImage.ForwardFourierTransform();
-
-      
-                // Compute the magnitude spectrum for visualization
-                Bitmap magnitudeImage = complexImage.ToBitmap();
-                pictureBox2.Image = magnitudeImage;
-                pictureBox2.Invalidate();
-            }
-
-
-        }
-        private Bitmap ResizeToPowerOf2(Bitmap bitmap)
-        {
-            if (pictureBox1.Image != null)
-            {
-                bitmap = new Bitmap(pictureBox1.Image, pictureBox1.Width, pictureBox1.Height);
-                int width = bitmap.Width;
-                int height = bitmap.Height;
-
-                int newWidth = NearestPowerOf2(width);
-                int newHeight = NearestPowerOf2(height);
-
-                Bitmap resizedImage = new Bitmap(newWidth, newHeight);
-                using (Graphics g = Graphics.FromImage(resizedImage))
-                {
-                    g.DrawImage(bitmap, 0, 0, newWidth, newHeight);
-                }
-
-                return resizedImage;
-            }
-
-            return null;
-        }
-
-
-        private int NearestPowerOf2(int value)
-        {
-            int power = 1;
-            while (power < value)
-            {
-                power *= 2;
-            }
-            return power;
-        }
-        private void fftButtonToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+            // private int NearestPowerOf2(int value)
+            // {
+            //     int power = 1;
+            //     while (power < value)
+            //     {
+            //             power *= 2;
+            //     }
+            //     return power;
+            // }
+            
         
-            if (pictureBox1.Image == null)
+     private void fFTToolStripMenuItem_Click(object sender, EventArgs e)
+     {
+        // Bitmap bitmap = new Bitmap(pictureBox2.Image);
+        // Bitmap resizedImage = ResizeToPowerOf2(bitmap);
+        //
+        // // Convert the image to a ComplexImage array
+        // ComplexImage[,] complexImage = new ComplexImage[resizedImage.Width, resizedImage.Height];
+        // for (int x = 0; x < resizedImage.Width; x++)
+        // { 
+        //     for (int y = 0; y < resizedImage.Height; y++)
+        //     {
+        //          Color pixel = resizedImage.GetPixel(x, y);
+        //         complexImage[x, y] = new ComplexImage
+        //         {
+        //                  RealPart = pixel.R,
+        //                 ImaginaryPart = pixel.G
+        //         };
+        //     }
+        // }
+        //
+        // // Apply the low-pass filter
+        // double cutoffFrequency = 740; // Adjust this value to change the filter's cutoff frequency
+        // LowPassFilter.ApplyLowPassFilter(complexImage, cutoffFrequency);
+        //
+        // // Convert the filtered ComplexImage array back to a Bitmap
+        // for (int x = 0; x < resizedImage.Width; x++)
+        // {
+        //      for (int y = 0; y < resizedImage.Height; y++)
+        //      {
+        //         int r = (int)complexImage[x, y].RealPart;
+        //         int g = (int)complexImage[x, y].ImaginaryPart;
+        //         int b = 100;
+        //         resizedImage.SetPixel(x, y, Color.FromArgb(r, g, b));
+        //      }
+        // }
+        //
+        //     // Display the filtered image
+        //     pictureBox2.Image = resizedImage;
+     }
+        
+        // public class ComplexImage
+        // {
+        //     public double RealPart { get; set; }
+        //     public double ImaginaryPart { get; set; }
+        // }
+        
+        
+        // public static class LowPassFilter
+        // {
+        // public static void ApplyLowPassFilter(ComplexImage[,] complexImage, double cutoffFrequency)
+        // {
+        //      int width = complexImage.GetLength(0);
+        //      int height = complexImage.GetLength(1);
+        //
+        //      for (int x = 0; x < width; x++)
+        //      {
+        //          for (int y = 0; y < height; y++)
+        //          {
+        //                  double distance = Math.Sqrt(x * x + y * y);
+        //                  if (distance > cutoffFrequency)
+        //                  {
+        //                      complexImage[x, y].RealPart = 0;
+        //                      complexImage[x, y].ImaginaryPart = 0;
+        //                  }
+        //          }
+        //      }
+        // }
+        // }
+        
+        
+        private static int NextPowerOfTwo(int n)
+        {
+            var p = 1;
+            while (p < n) p <<= 1;
+            return p;
+        }
+          private void ApplyLowPassFilter(Bitmap inputImage)
+        {
+            Grayscale filter = new Grayscale(0.2125, 0.7154, 0.0721);
+            Bitmap grayscaleImage = filter.Apply(inputImage);
+
+            int width = NextPowerOfTwo(grayscaleImage.Width);
+            int height = NextPowerOfTwo(grayscaleImage.Height);
+            ResizeBilinear resizeFilter = new ResizeBilinear(width, height);
+            Bitmap resizedImage = resizeFilter.Apply(grayscaleImage);
+
+            // Apply FFT to the resized grayscale image
+            ComplexImage complexImage = ComplexImage.FromBitmap(resizedImage);
+            complexImage.ForwardFourierTransform();
+
+            // Create a low-pass filter mask
+            int radius = 10; // Set the radius for your low-pass filter
+            int cx = width / 2;
+            int cy = height / 2;
+            for (int y = 0; y < height; y++)
             {
-                MessageBox.Show("Please load an image first.");
-                return;
+                for (int x = 0; x < width; x++)
+                {
+                    if ((x - cx) * (x - cx) + (y - cy) * (y - cy) > radius * radius)
+                    {
+                        complexImage.Data[y, x].Re = 0;
+                        complexImage.Data[y, x].Im = 0;
+                    }
+                }
             }
             
-            // fourier to the loaded image
-            fourier();
+            // Apply the inverse FFT to convert back to the spatial domain
+            complexImage.BackwardFourierTransform();
+
+            // Get the filtered image
+            Bitmap lowPassImage = complexImage.ToBitmap();
+
+            // Resize the image back to the original dimensions
+            ResizeBilinear resizeFilterOriginal = new ResizeBilinear(inputImage.Width, inputImage.Height);
+            Bitmap finalImage = resizeFilterOriginal.Apply(lowPassImage);
+
+            // Display the low-pass filtered image in a picture box
+            pictureBox2.Image = finalImage;
         }
+          
+        private void ApplyHighPassFilter(Bitmap inputImage)
+        {
+            Grayscale grayscaleFilter = new Grayscale(0.2125, 0.7154, 0.0721);
+            Bitmap grayscaleImage = grayscaleFilter.Apply(inputImage);
+
+            int width = NextPowerOfTwo(grayscaleImage.Width);
+            int height = NextPowerOfTwo(grayscaleImage.Height);
+            ResizeBilinear resizeFilter = new ResizeBilinear(width, height);
+            Bitmap resizedImage = resizeFilter.Apply(grayscaleImage);
+
+            // Apply FFT to the resized grayscale image
+            ComplexImage complexImage = ComplexImage.FromBitmap(resizedImage);
+            complexImage.ForwardFourierTransform();
+
+            // Create a high-pass filter mask
+            int radius = 10; // Set the radius for your high-pass filter
+            int cx = width / 2;
+            int cy = height / 2;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if ((x - cx) * (x - cx) + (y - cy) * (y - cy) <= radius * radius)
+                    {
+                        complexImage.Data[y, x].Re = 0;
+                        complexImage.Data[y, x].Im = 0;
+                    }
+                }
+            }
+
+            // Apply the inverse FFT to convert back to the spatial domain
+            complexImage.BackwardFourierTransform();
+
+            // Get the filtered image
+            Bitmap highPassImage = complexImage.ToBitmap();
+
+            // Resize the image back to the original dimensions
+            ResizeBilinear resizeFilterOriginal = new ResizeBilinear(inputImage.Width, inputImage.Height);
+            Bitmap finalImage = resizeFilterOriginal.Apply(highPassImage);
+
+            // Display the high-pass filtered image in a picture box
+            pictureBox2.Image = finalImage;
+        }
+
+        private void lBFToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            ApplyLowPassFilter((Bitmap)pictureBox1.Image);
+        }
+        private void hBFToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            ApplyHighPassFilter((Bitmap)pictureBox1.Image);
+        }
+  
         private void pdfButtonToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -624,21 +772,7 @@ namespace alaaali
                 }
             }
         }
-        // private void pdfButtonToolStripMenuItem_Click(object sender, EventArgs e)
-        // {
-        //
-        //     SaveFileDialog saveFileDialog = new SaveFileDialog();
-        //     saveFileDialog.Filter = "PDF file (*.pdf)|*.pdf";
-        //     saveFileDialog.Title = "Save PDF Report";
-        //     saveFileDialog.InitialDirectory = @"C:\";
-        //     saveFileDialog.RestoreDirectory = true;
-        //
-        //     if (saveFileDialog.ShowDialog() == DialogResult.OK)
-        //     {
-        //         CreatePdfReport(saveFileDialog.FileName);
-        //         MessageBox.Show("PDF report generated successfully.");
-        //     }
-        // }
+      
 
         private void CreatePdfReport(string pdfFilePath)
         {
@@ -930,7 +1064,8 @@ namespace alaaali
             try
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "Bitmap Image (*.bmp)|*.bmp";
+                saveFileDialog.Filter = "PNG Image|*.png|Bitmap Image|*.bmp|JPEG Image|*.jpeg";
+                                        //"Bitmap Image (*.bmp)|*.bmp";
                 saveFileDialog.Title = "Save Image";
                 saveFileDialog.InitialDirectory = @"C:\";
                 saveFileDialog.RestoreDirectory = true;
@@ -1291,97 +1426,8 @@ namespace alaaali
                 }
             }
         }
-        
-       // private async void shareToolStripMenuItem_Click(object sender, EventArgs e)
-       //  {
-       //      using (OpenFileDialog openFileDialog = new OpenFileDialog())
-       //      {
-       //          openFileDialog.Filter = "All Files (*.*)|*.*";
-       //          openFileDialog.Title = "Select a File to Share";
-       //
-       //          if (openFileDialog.ShowDialog() == DialogResult.OK)
-       //          {
-       //              string filePath = openFileDialog.FileName;
-       //
-       //              ContextMenuStrip shareMenu = new ContextMenuStrip();
-       //
-       //              ToolStripMenuItem shareViaWhatsApp = new ToolStripMenuItem("Share via WhatsApp");
-       //              shareViaWhatsApp.Click += async (s, ev) => await ShareViaWhatsApp(filePath);
-       //              shareMenu.Items.Add(shareViaWhatsApp);
-       //
-       //              ToolStripMenuItem shareViaTelegram = new ToolStripMenuItem("Share via Telegram");
-       //              shareViaTelegram.Click += async (s, ev) => await ShareViaTelegram(filePath);
-       //              shareMenu.Items.Add(shareViaTelegram);
-       //
-       //              shareMenu.Show(Cursor.Position);
-       //          }
-       //      }
-       //  }
-       //
-       //  private async Task ShareViaWhatsApp(string filePath)
-       //  {
-       //      try
-       //      {
-       //          string fileUrl = await UploadFile(filePath);
-       //          string whatsappUrl = $"https://api.whatsapp.com/send?text={Uri.EscapeDataString(fileUrl)}";
-       //          Process.Start(new ProcessStartInfo("cmd", $"/c start {whatsappUrl}") { CreateNoWindow = true });
-       //      }
-       //      catch (Exception ex)
-       //      {
-       //          MessageBox.Show($"Error sharing via WhatsApp: {ex.Message}");
-       //      }
-       //  }
-       //
-       //  private async Task ShareViaTelegram(string filePath)
-       //  {
-       //      try
-       //      {
-       //          string fileUrl = await UploadFile(filePath);
-       //          string telegramUrl = $"https://t.me/share/url?url={Uri.EscapeDataString(fileUrl)}";
-       //          Process.Start(new ProcessStartInfo("cmd", $"/c start {telegramUrl}") { CreateNoWindow = true });
-       //      }
-       //      catch (Exception ex)
-       //      {
-       //          MessageBox.Show($"Error sharing via Telegram: {ex.Message}");
-       //      }
-       //  }
-       //
-       //  private async Task<string> UploadFile(string filePath)
-       //  {
-       //      using (HttpClient client = new HttpClient())
-       //      {
-       //          using (MultipartFormDataContent content = new MultipartFormDataContent())
-       //          {
-       //              try
-       //              {
-       //                  byte[] fileBytes = File.ReadAllBytes(filePath);
-       //                  content.Add(new ByteArrayContent(fileBytes, 0, fileBytes.Length), "files[]", Path.GetFileName(filePath));
-       //
-       //                  HttpResponseMessage response = await client.PostAsync("https://uguu.se/upload.php", content);
-       //
-       //                  // Log response details for debugging
-       //                  string responseBody = await response.Content.ReadAsStringAsync();
-       //                  if (!response.IsSuccessStatusCode)
-       //                  {
-       //                      MessageBox.Show($"Error: {response.StatusCode}\n{responseBody}");
-       //                      return null;
-       //                  }
-       //
-       //                  dynamic jsonResponse = JObject.Parse(responseBody);
-       //                  return jsonResponse.files[0].url;
-       //              }
-       //              catch (HttpRequestException httpEx)
-       //              {
-       //                  MessageBox.Show($"HTTP Request Error: {httpEx.Message}");
-       //                  return null;
-       //              }
-       //              catch (Exception ex)
-       //              {
-       //                  MessageBox.Show($"General Error: {ex.Message}");
-       //                  return null;
-       //              }
-       //          }
-       //      }
-       //  }
+
+
+   
     }
 }
