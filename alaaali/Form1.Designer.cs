@@ -48,6 +48,8 @@
             this.colorToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.shareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fFTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sepiaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hueModifierToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,8 +73,6 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.openFileDialog2 = new System.Windows.Forms.OpenFileDialog();
-            this.lBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -213,6 +213,20 @@
             this.fFTToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
             this.fFTToolStripMenuItem.Text = "FFT";
             this.fFTToolStripMenuItem.Click += new System.EventHandler(this.fFTToolStripMenuItem_Click);
+            // 
+            // lBFToolStripMenuItem
+            // 
+            this.lBFToolStripMenuItem.Name = "lBFToolStripMenuItem";
+            this.lBFToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.lBFToolStripMenuItem.Text = "lBF";
+            this.lBFToolStripMenuItem.Click += new System.EventHandler(this.lBFToolStripMenuItem_Click_1);
+            // 
+            // hBFToolStripMenuItem
+            // 
+            this.hBFToolStripMenuItem.Name = "hBFToolStripMenuItem";
+            this.hBFToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
+            this.hBFToolStripMenuItem.Text = "hBF";
+            this.hBFToolStripMenuItem.Click += new System.EventHandler(this.hBFToolStripMenuItem_Click_1);
             // 
             // imageProcessingToolStripMenuItem
             // 
@@ -385,20 +399,6 @@
             // openFileDialog2
             // 
             this.openFileDialog2.FileName = "openFileDialog2";
-            // 
-            // lBFToolStripMenuItem
-            // 
-            this.lBFToolStripMenuItem.Name = "lBFToolStripMenuItem";
-            this.lBFToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.lBFToolStripMenuItem.Text = "lBF";
-            this.lBFToolStripMenuItem.Click += new System.EventHandler(this.lBFToolStripMenuItem_Click_1);
-            // 
-            // hBFToolStripMenuItem
-            // 
-            this.hBFToolStripMenuItem.Name = "hBFToolStripMenuItem";
-            this.hBFToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.hBFToolStripMenuItem.Text = "hBF";
-            this.hBFToolStripMenuItem.Click += new System.EventHandler(this.hBFToolStripMenuItem_Click_1);
             // 
             // Form1
             // 

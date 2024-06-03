@@ -72,13 +72,6 @@ namespace alaaali
         {
             InitializeComponent();
 
-            // this.Width = 900;
-            // this.Height = 700;
-            // bm = new Bitmap(pictureBox1.Width,pictureBox1.Height);
-            // g = Graphics.FromImage(bm);
-            // g.Clear (Color.White);
-            // pictureBox1.Image = bm;
-            
             pictureBox1.MouseDown += PictureBox1_MouseDown;
             pictureBox1.MouseMove += PictureBox1_MouseMove;
             pictureBox1.MouseUp += PictureBox1_MouseUp;
@@ -190,31 +183,25 @@ namespace alaaali
                 {
                     g.DrawEllipse(p, cX, cY, sX, sY);
                 }
-                 if (index == 5)
+                if (index == 5)
                 {
                     g.DrawRectangle(p, cX, cY, sX, sY);
                 }
-                 if (index == 6)
+                if (index == 6)
                 {
                     g.DrawLine(p, cX, cY, x, y);
                 }
-                 if (index == 8)
+                if (index == 8)
                 {
                     Point[] trianglePoints = { new Point(cX, cY), new Point(cX + sX, cY), new Point(cX, cY + sY) };
                     g.DrawPolygon(p, trianglePoints);
                 }
-                 if (index == 9)
+                if (index == 9)
                 {
                     Point[] curvePoints = { new Point(cX, cY), new Point(cX + sX / 2, cY - sY), new Point(cX + sX, cY) };
                     g.DrawCurve(p, curvePoints);
                 }
-                // if (index == 10)
-                // {
-                //
-                //     textLocation = new Point(e.X, e.Y);
-                //     textBox1.Visible = true;
-                //     textBox1.Focus();
-                // }
+             
             }
             pictureBox2.Invalidate();
         }
@@ -296,28 +283,7 @@ namespace alaaali
 
             }
         }
-
-        // private void PictureBox1_Paint(object sender, PaintEventArgs e)
-        // {
-        //     Graphics g = e.Graphics;
-        //     if (_isPainting)
-        //     {
-        //         if (index == 3)
-        //         {
-        //             g.DrawEllipse(p, cX, cY, sX, sY);
-        //         }
-        //
-        //         if (index == 4)
-        //         {
-        //             g.DrawRectangle(p, cX, cY, sX, sY);
-        //         }
-        //
-        //         if (index == 5)
-        //         {
-        //             g.DrawLine(p, cX, cY, x, y);
-        //         }
-        //     }
-        // }
+         
 
         private void paintToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -695,7 +661,7 @@ namespace alaaali
         private void pdfButtonToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            // saveFileDialog.Filter = "Compressed PDF file (*.pdf.gz)|*.pdf.gz";
+            saveFileDialog.Filter = "Compressed PDF file (*.pdf.gz)|*.pdf.gz";
             saveFileDialog.Title = "Save PDF Report";
             saveFileDialog.InitialDirectory = @"C:\"; // Update initial directory as needed
             saveFileDialog.RestoreDirectory = true;
@@ -941,7 +907,7 @@ namespace alaaali
             {
                 g.DrawImage(originalBmp, 0, 0, originalBmp.Width, originalBmp.Height);
 
-                Color[] colormap;
+                Color[] colormap; 
                 if (colorSelected)
                 {
                     colormap = GetColormap(selectedColor);
@@ -1065,7 +1031,7 @@ namespace alaaali
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "PNG Image|*.png|Bitmap Image|*.bmp|JPEG Image|*.jpeg";
-                                        //"Bitmap Image (*.bmp)|*.bmp";
+                // saveFileDialog.Filter = "Bitmap Image (*.bmp)|*.bmp";
                 saveFileDialog.Title = "Save Image";
                 saveFileDialog.InitialDirectory = @"C:\";
                 saveFileDialog.RestoreDirectory = true;
@@ -1426,8 +1392,5 @@ namespace alaaali
                 }
             }
         }
-
-
-   
     }
 }
