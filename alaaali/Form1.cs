@@ -19,23 +19,19 @@ using System.IO.Compression;
 using AForge.Imaging;
 using System.Data;
 using Bitmap = System.Drawing.Bitmap;
-
-
-
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-
 using Newtonsoft.Json.Linq;
+
+
 namespace alaaali
 
 {
     public partial class Form1 : Form
     {
-        
-        
         private List<Rectangle> selectedAreas = new List<Rectangle>();
         private bool isSelecting = false;
         private Color selectedColor;
@@ -57,9 +53,6 @@ namespace alaaali
         private Color new_color;
         
         
-
-       
-         private Color _paintColor = Color.Black;
          private  int _paintBrushSize = 1;
          private bool _isSelect = true;
          private string _brushType = "Triangle";
@@ -108,35 +101,18 @@ namespace alaaali
             this.Controls.Add(pdfButton);
             
         }
-        private void colorToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            ColorDialog _colorDialog = new ColorDialog();
-            if (_colorDialog.ShowDialog() == DialogResult.OK)
-            {
-                _paintColor = _colorDialog.Color;
-                selectedColor = _colorDialog.Color;
-                p.Color = _paintColor;
-                colorSelected = true;
-            }
-        }
    
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
             p.Width = _paintBrushSize;
             eraser.Width = _paintBrushSize;
             _isPainting = true;
-            if (index == 1)
-            {
-                PaintOnPictureBox(e.Location);
-            }
-            else if (index == 2)
+          
+            if (index == 2)
             {
                 py = e.Location;
             }
-            else if (index == 3)
-            {
-                py = e.Location;
-            }
+           
             cX = e.X;
             cY = e.Y;
 
@@ -146,23 +122,13 @@ namespace alaaali
         {
             if (_isPainting)
             {
-                if (index == 1)
-                {
-                    PaintOnPictureBox(e.Location);
-                }
-                else if (index == 2)
+                if (index == 2)
                 {
                     px = e.Location; 
                     g.DrawLine(p, px, py);
                     py = px;
                 }
-                else if (index == 3)
-                {
-                    px = e.Location;
-                    g.CompositingMode = CompositingMode.SourceCopy;
-                    g.DrawLine(eraser, px, py);
-                    py = px;
-                }
+              
                 
                 x = e.X;
                 y = e.Y;
@@ -196,36 +162,12 @@ namespace alaaali
                     Point[] trianglePoints = { new Point(cX, cY), new Point(cX + sX, cY), new Point(cX, cY + sY) };
                     g.DrawPolygon(p, trianglePoints);
                 }
-                if (index == 9)
-                {
-                    Point[] curvePoints = { new Point(cX, cY), new Point(cX + sX / 2, cY - sY), new Point(cX + sX, cY) };
-                    g.DrawCurve(p, curvePoints);
-                }
+              
              
             }
             pictureBox2.Invalidate();
         }
         
-        
-        private void InitializeGraphics()
-        {
-            if (pictureBox2.Image == null)
-            {
-                pictureBox2.Image = new Bitmap(pictureBox2.Width, pictureBox2.Height);
-            }
-        }
-        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            InitializeGraphics();
-            using (Graphics g = Graphics.FromImage(pictureBox2.Image))
-            {
-                g.Clear(Color.White);
-            }
-            pictureBox2.Invalidate();
-            index = 0;
-        }
-        
-     
          static Point set_point(PictureBox pb, Point pt)
          {
              float pX = 1f * pb.Image.Width / pb.Width;
@@ -267,64 +209,33 @@ namespace alaaali
                     g.DrawPolygon(p, trianglePoints);
 
                 }
-
-                if (index == 9)
-                {
-                    // Define points that the curve will pass through
-                    Point[] curvePoints = {
-                        new Point(cX, cY),
-                        new Point(cX + sX / 2, cY - sY), // Control point for the curve
-                        new Point(cX + sX, cY)
-                    };
-
-                    // Draw the curve
-                    g.DrawCurve(p, curvePoints);
-                }
+                
 
             }
         }
          
-
-        private void paintToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _isSelect = false;
-            index = 1;
-        }
+         
         private void pencilToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           //InitializeGraphics();
             g = Graphics.FromImage(pictureBox2.Image);
             index = 2;
             _isSelect = false;
         }
-        private void eraserToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // InitializeGraphics();
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 3;
-            _isSelect = false;
-            if (pictureBox2.Image != null)
-            {
-                originalimage = (Bitmap)pictureBox2.Image;
-                copyimage = (Bitmap)pictureBox1.Image;
-            }
-        }
+
         private void ellipseToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InitializeGraphics();
+            g = Graphics.FromImage(pictureBox2.Image);
             index = 4;
             _isSelect = false;
         }
         private void rectangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // InitializeGraphics();
             g = Graphics.FromImage(pictureBox2.Image);
             index = 5;
             _isSelect = false;
         }
         private void lineToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // InitializeGraphics();
             g = Graphics.FromImage(pictureBox2.Image);
             index = 6;
             _isSelect = false;
@@ -333,7 +244,6 @@ namespace alaaali
         
         private void triangleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // InitializeGraphics();
             g = Graphics.FromImage(pictureBox2.Image);
             index = 8;
             _isSelect = false;
@@ -344,217 +254,9 @@ namespace alaaali
             {
                 bm =(Bitmap) pictureBox2.Image;
                 Point point = set_point(pictureBox2, e.Location);
-                fill(bm,point.X,point.Y,_paintColor);
             }
         }
-        
-        private void fillToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            index = 7;
-        }
-        public void fill(Bitmap bm, int x, int y, Color color)
-         {
-             Color old_color = bm.GetPixel(x, y);
-             Stack<Point> pixel = new Stack<Point>();
-             pixel.Push(new Point(x,y));
-             bm.SetPixel(x,y,color);
-             if (old_color == color) 
-             {
-               
-                 return;
-             }
-
-             while (pixel.Count > 0)
-             {
-                 Console.WriteLine(pixel.Count);
-                 Point pt = (Point)pixel.Pop();
-                 if (pt.X > 0 && pt.Y > 0 && pt.X < bm.Width - 1 && pt.Y < bm.Height - 1)
-                 {
-                     validate(bm,pixel,pt.X-1,pt.Y,old_color,color);
-                     validate(bm,pixel,pt.X,pt.Y,old_color,color);
-                     validate(bm,pixel,pt.X+1,pt.Y,old_color,color);
-                     validate(bm,pixel,pt.X,pt.Y+1,old_color,color);
-                 }
-             }
-         }
-        
-        private void validate(Bitmap bm, Stack<Point> sp, int x, int y, Color oldColor, Color newColor)
-         {
-             Color cx = bm.GetPixel(x, y);
-             if (cx == oldColor)
-             {
-                 sp.Push(new Point(x,y));
-                 bm.SetPixel(x,y,newColor);
-             }
-         }
-
-         private void PaintOnPictureBox(Point location)
-         {
-            InitializeGraphics();
-
-            if (_isPainting)
-            {
-                using (Graphics g = Graphics.FromImage(pictureBox2.Image))
-                {
-                    switch (_brushType)
-                    {
-                        case "Round":
-                            using (Brush brush = new SolidBrush(_paintColor))
-                            {
-                                g.FillEllipse(brush, location.X - _paintBrushSize / 2, location.Y - _paintBrushSize / 2, _paintBrushSize, _paintBrushSize);
-                            }
-                            break;
-                        case "Square":
-                            using (Brush brush = new SolidBrush(_paintColor))
-                            {
-                                g.FillRectangle(brush, location.X - _paintBrushSize / 2, location.Y - _paintBrushSize / 2, _paintBrushSize, _paintBrushSize);
-                            }
-                            break;
-                        case "Triangle":
-                            using (Brush brush = new SolidBrush(_paintColor))
-                            {
-                                Point[] points = {
-                                    new Point(location.X, location.Y - _paintBrushSize / 2),
-                                    new Point(location.X - _paintBrushSize / 2, location.Y + _paintBrushSize / 2),
-                                    new Point(location.X + _paintBrushSize / 2, location.Y + _paintBrushSize / 2)
-                                };
-                                g.FillPolygon(brush, points);
-                            }
-                            break;
-                        case "Star":
-                            using (Brush brush = new SolidBrush(_paintColor))
-                            {
-                                PointF[] starPoints = createStarPoints(5, new PointF(location.X, location.Y), _paintBrushSize * 2, _paintBrushSize);
-                                g.FillPolygon(brush, starPoints);
-                            }
-                            break;
-                    }
-                }
-            }
-
-            pictureBox2.Invalidate();
-        }
-
-         private PointF[] createStarPoints(int numPoints, PointF center, float outerRadius, float innerRadius)
-         {
-             List<PointF> points = new List<PointF>();
-             double angle = Math.PI / numPoints;
-             for (int i = 0; i < 2 * numPoints; i++)
-             {
-                 double r = (i % 2 == 0) ? outerRadius : innerRadius;
-                 PointF pt = new PointF(
-                     center.X + (float)(r * Math.Sin(i * angle)),
-                     center.Y - (float)(r * Math.Cos(i * angle)));
-                 points.Add(pt);
-             }
-             return points.ToArray();
-         }
-       
-        // private Bitmap ResizeToPowerOf2(Bitmap bitmap)
-        // {
-        //     if (pictureBox1.Image != null)
-        //     {
-        //         bitmap = new Bitmap(pictureBox1.Image, pictureBox1.Width, pictureBox1.Height);
-        //         int width = bitmap.Width;
-        //         int height = bitmap.Height;
-        //
-        //         int newWidth = NearestPowerOf2(width);
-        //         int newHeight = NearestPowerOf2(height);
-        //
-        //         Bitmap resizedImage = new Bitmap(newWidth, newHeight);
-        //         using (Graphics g = Graphics.FromImage(resizedImage))
-        //         {
-        //             g.DrawImage(bitmap, 0, 0, newWidth, newHeight);
-        //         }
-        //
-        //         return resizedImage;
-        //     }
-        //
-        //     return null;
-        // }
-        //
-
-            // private int NearestPowerOf2(int value)
-            // {
-            //     int power = 1;
-            //     while (power < value)
-            //     {
-            //             power *= 2;
-            //     }
-            //     return power;
-            // }
-            
-        
-     private void fFTToolStripMenuItem_Click(object sender, EventArgs e)
-     {
-        // Bitmap bitmap = new Bitmap(pictureBox2.Image);
-        // Bitmap resizedImage = ResizeToPowerOf2(bitmap);
-        //
-        // // Convert the image to a ComplexImage array
-        // ComplexImage[,] complexImage = new ComplexImage[resizedImage.Width, resizedImage.Height];
-        // for (int x = 0; x < resizedImage.Width; x++)
-        // { 
-        //     for (int y = 0; y < resizedImage.Height; y++)
-        //     {
-        //          Color pixel = resizedImage.GetPixel(x, y);
-        //         complexImage[x, y] = new ComplexImage
-        //         {
-        //                  RealPart = pixel.R,
-        //                 ImaginaryPart = pixel.G
-        //         };
-        //     }
-        // }
-        //
-        // // Apply the low-pass filter
-        // double cutoffFrequency = 740; // Adjust this value to change the filter's cutoff frequency
-        // LowPassFilter.ApplyLowPassFilter(complexImage, cutoffFrequency);
-        //
-        // // Convert the filtered ComplexImage array back to a Bitmap
-        // for (int x = 0; x < resizedImage.Width; x++)
-        // {
-        //      for (int y = 0; y < resizedImage.Height; y++)
-        //      {
-        //         int r = (int)complexImage[x, y].RealPart;
-        //         int g = (int)complexImage[x, y].ImaginaryPart;
-        //         int b = 100;
-        //         resizedImage.SetPixel(x, y, Color.FromArgb(r, g, b));
-        //      }
-        // }
-        //
-        //     // Display the filtered image
-        //     pictureBox2.Image = resizedImage;
-     }
-        
-        // public class ComplexImage
-        // {
-        //     public double RealPart { get; set; }
-        //     public double ImaginaryPart { get; set; }
-        // }
-        
-        
-        // public static class LowPassFilter
-        // {
-        // public static void ApplyLowPassFilter(ComplexImage[,] complexImage, double cutoffFrequency)
-        // {
-        //      int width = complexImage.GetLength(0);
-        //      int height = complexImage.GetLength(1);
-        //
-        //      for (int x = 0; x < width; x++)
-        //      {
-        //          for (int y = 0; y < height; y++)
-        //          {
-        //                  double distance = Math.Sqrt(x * x + y * y);
-        //                  if (distance > cutoffFrequency)
-        //                  {
-        //                      complexImage[x, y].RealPart = 0;
-        //                      complexImage[x, y].ImaginaryPart = 0;
-        //                  }
-        //          }
-        //      }
-        // }
-        // }
-        
-        
+   
         private static int NextPowerOfTwo(int n)
         {
             var p = 1;
@@ -1031,7 +733,6 @@ namespace alaaali
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "PNG Image|*.png|Bitmap Image|*.bmp|JPEG Image|*.jpeg";
-                // saveFileDialog.Filter = "Bitmap Image (*.bmp)|*.bmp";
                 saveFileDialog.Title = "Save Image";
                 saveFileDialog.InitialDirectory = @"C:\";
                 saveFileDialog.RestoreDirectory = true;
@@ -1070,8 +771,6 @@ namespace alaaali
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // pictureBox1.Image = null;
-            // pictureBox2.Image = null;
             pictureBox1.AllowDrop = true;
             _colorDialog = new ColorDialog();
         }

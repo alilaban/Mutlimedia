@@ -40,14 +40,8 @@
             this.rectangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pencilToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.eraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.paintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.triangleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.shareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fFTToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageProcessingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +84,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openToolStripMenuItem, this.saveToolStripMenuItem, this.exitToolStripMenuItem, this.pdfButtonToolStripMenuItem, this.compressButtonToolStripMenuItem, this.ellipseToolStripMenuItem, this.rectangleToolStripMenuItem, this.lineToolStripMenuItem, this.pencilToolStripMenuItem, this.eraserToolStripMenuItem, this.fillToolStripMenuItem, this.clearToolStripMenuItem, this.paintToolStripMenuItem, this.triangleToolStripMenuItem, this.colorToolStripMenuItem1, this.shareToolStripMenuItem, this.fFTToolStripMenuItem, this.lBFToolStripMenuItem, this.hBFToolStripMenuItem });
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.openToolStripMenuItem, this.saveToolStripMenuItem, this.exitToolStripMenuItem, this.pdfButtonToolStripMenuItem, this.compressButtonToolStripMenuItem, this.ellipseToolStripMenuItem, this.rectangleToolStripMenuItem, this.lineToolStripMenuItem, this.pencilToolStripMenuItem, this.triangleToolStripMenuItem, this.shareToolStripMenuItem, this.lBFToolStripMenuItem, this.hBFToolStripMenuItem });
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
@@ -158,34 +152,6 @@
             this.pencilToolStripMenuItem.Text = "pencil";
             this.pencilToolStripMenuItem.Click += new System.EventHandler(this.pencilToolStripMenuItem_Click);
             // 
-            // eraserToolStripMenuItem
-            // 
-            this.eraserToolStripMenuItem.Name = "eraserToolStripMenuItem";
-            this.eraserToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.eraserToolStripMenuItem.Text = "eraser";
-            this.eraserToolStripMenuItem.Click += new System.EventHandler(this.eraserToolStripMenuItem_Click);
-            // 
-            // fillToolStripMenuItem
-            // 
-            this.fillToolStripMenuItem.Name = "fillToolStripMenuItem";
-            this.fillToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.fillToolStripMenuItem.Text = "fill";
-            this.fillToolStripMenuItem.Click += new System.EventHandler(this.fillToolStripMenuItem_Click);
-            // 
-            // clearToolStripMenuItem
-            // 
-            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.clearToolStripMenuItem.Text = "clear";
-            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
-            // 
-            // paintToolStripMenuItem
-            // 
-            this.paintToolStripMenuItem.Name = "paintToolStripMenuItem";
-            this.paintToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.paintToolStripMenuItem.Text = "paint";
-            this.paintToolStripMenuItem.Click += new System.EventHandler(this.paintToolStripMenuItem_Click);
-            // 
             // triangleToolStripMenuItem
             // 
             this.triangleToolStripMenuItem.Name = "triangleToolStripMenuItem";
@@ -193,26 +159,12 @@
             this.triangleToolStripMenuItem.Text = "triangle";
             this.triangleToolStripMenuItem.Click += new System.EventHandler(this.triangleToolStripMenuItem_Click);
             // 
-            // colorToolStripMenuItem1
-            // 
-            this.colorToolStripMenuItem1.Name = "colorToolStripMenuItem1";
-            this.colorToolStripMenuItem1.Size = new System.Drawing.Size(185, 24);
-            this.colorToolStripMenuItem1.Text = "color";
-            this.colorToolStripMenuItem1.Click += new System.EventHandler(this.colorToolStripMenuItem1_Click);
-            // 
             // shareToolStripMenuItem
             // 
             this.shareToolStripMenuItem.Name = "shareToolStripMenuItem";
             this.shareToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
             this.shareToolStripMenuItem.Text = "share";
             this.shareToolStripMenuItem.Click += new System.EventHandler(this.shareToolStripMenuItem_Click);
-            // 
-            // fFTToolStripMenuItem
-            // 
-            this.fFTToolStripMenuItem.Name = "fFTToolStripMenuItem";
-            this.fFTToolStripMenuItem.Size = new System.Drawing.Size(185, 24);
-            this.fFTToolStripMenuItem.Text = "FFT";
-            this.fFTToolStripMenuItem.Click += new System.EventHandler(this.fFTToolStripMenuItem_Click);
             // 
             // lBFToolStripMenuItem
             // 
@@ -424,21 +376,9 @@
         private System.Windows.Forms.ToolStripMenuItem lBFToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hBFToolStripMenuItem;
 
-        private System.Windows.Forms.ToolStripMenuItem fFTToolStripMenuItem;
-
         private System.Windows.Forms.ToolStripMenuItem shareToolStripMenuItem;
 
-        private System.Windows.Forms.ToolStripMenuItem colorToolStripMenuItem1;
-
         private System.Windows.Forms.ToolStripMenuItem triangleToolStripMenuItem;
-
-        private System.Windows.Forms.ToolStripMenuItem paintToolStripMenuItem;
-
-        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
-
-        private System.Windows.Forms.ToolStripMenuItem fillToolStripMenuItem;
-
-        private System.Windows.Forms.ToolStripMenuItem eraserToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem pencilToolStripMenuItem;
 
